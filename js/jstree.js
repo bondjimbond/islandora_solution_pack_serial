@@ -9,6 +9,7 @@ Drupal.settings.jsTree_jQuery = jQuery.noConflict(true);
         attach: function(context, settings) {
             $('#islandora_serial_object_tree_view').jstree({
                 'core': {
+                    'themes': { 'icons':false },
                     'data': settings.islandora_serial_object.data
                 },
                 'types': settings.islandora_serial_object.types,
