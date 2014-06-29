@@ -533,15 +533,19 @@ function islandora_serial_object_get_max_sequence_number($parent_id) {
   $sequence_predicate = ISLANDORA_SERIAL_OBJECT_SEQUENCE_PREDICATE;
   $pdf_parent_predicate = ISLANDORA_SERIAL_OBJECT_PDF_PARENT_PREDICATE;
   $islandora_namespace = ISLANDORA_RELS_EXT_URI;
-  $sequence_query = <<<EOQ
-  SELECT ?sequence_number FROM <#ri> WHERE {
-    ?child <$islandora_namespace$pdf_parent_predicate> <info:fedora/{$parent_id}> ;
-           <$islandora_namespace{$sequence_predicate}> ?sequence_number
-  }
-  ORDER BY DESC(?sequence_number)
-  LIMIT 1
+  $sequence_query = <<<'EOQ'
+  select $sequence_number from <#ri> where
+    $child <!parent_predicate> <info:fedora/!pid> and
+    $child <!sequence_predicate> $sequence_number
+  order by $sequence_number desc
+  limit 1
 EOQ;
-  $sequence_number_results = $tuque->repository->ri->sparqlQuery($sequence_query);
+  $formatted_query = format_string($sequence_query, array(
+    '!parent_predicate' => "$islandora_namespace$pdf_parent_predicate",
+    '!pid' => $parent_id,
+    '!sequence_predicate' => "$islandora_namespace$sequence_predicate",
+  ));
+  $sequence_number_results = $tuque->repository->ri->itqlQuery($formatted_query);
   $sequence_number = reset($sequence_number_results);
   return $sequence_number ? $sequence_number['sequence_number']['value'] : 0;
 }
@@ -564,7 +568,7 @@ SELECT ?sequence_number ?obj ?pdf ?pdf_label FROM <#ri> WHERE {
        <fedora-model:label> ?pdf_label ;
   <$islandora_namespace{$sequence_predicate}> ?sequence_number
   }
-  ORDER BY ASC(?sequence_number)
+  ORDER BY ?sequence_number
 EOQ;
   $results = $connection->repository->ri->sparqlQuery($pdf_child_query);
   $leaf_objects = array();
@@ -626,8 +630,14 @@ function islandora_serial_object_get_json_for_tree(AbstractObject $object) {
   // Need to get the correct depth and ordering on our existing elements.
   $intermediates = islandora_serial_object_sort_intermediates($intermediates, $object->id);
   $json_data = array();
-  $leafs = islandora_serial_object_get_pdf_child_objects();
-  $stubs = islandora_serial_object_get_stub_child_objects();
+  if (variable_get('islandora_serial_object_display_stubs_pdfs_in_tree', FALSE)) {
+    $leafs = islandora_serial_object_get_pdf_child_objects();
+    $stubs = islandora_serial_object_get_stub_child_objects();
+  }
+  else {
+    $leafs = array();
+    $stubs = array();
+  }
   foreach ($intermediates['intermediates'] as $children) {
     foreach ($children as $values) {
       if (isset($stubs[$values['id']])) {
@@ -642,7 +652,7 @@ function islandora_serial_object_get_json_for_tree(AbstractObject $object) {
         'text' => $values['title'],
         'type' => $type,
       );
-      if ($values['leaf']) {
+      if ($values['leaf'] && variable_get('islandora_serial_object_display_stubs_pdfs_in_tree', FALSE)) {
         if (isset($leafs[$values['id']])) {
           foreach ($leafs[$values['id']] as $pdf_child) {
             if (isset($stubs[$pdf_child['pid']])) {

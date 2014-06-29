@@ -36,7 +36,7 @@ function islandora_serial_object_islandora_required_objects(IslandoraTuque $conn
   $serial_content_model->ingestDatastream($datastream);
 
   // Intermediate content model.
-  $intermediate_content_model = $connection->repository->constructObject('islandora:intermediateSerialCModel');
+  $intermediate_content_model = $connection->repository->constructObject('islandora:intermediateCModel');
   $intermediate_content_model->owner = 'fedoraAdmin';
   $intermediate_content_model->label = 'Islandora Serial Object Intermediate Content Model';
   $intermediate_content_model->models = 'fedora-system:ContentModel-3.0';
@@ -233,6 +233,15 @@ function islandora_serial_object_menu() {
     'access arguments' => array(2),
     'file' => 'includes/manage.inc',
   );
+  $items['admin/islandora/solution_pack_config/serial'] = array(
+    'title' => 'Serial Object Solution Pack',
+    'description' => 'Configure settings for the serial object solution pack.',
+    'page callback' => 'drupal_get_form',
+    'access arguments' => array('administer site configuration'),
+    'page arguments' => array('islandora_serial_object_settings_form'),
+    'file' => 'includes/admin.form.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );
   return $items;
 }
 
@@ -391,12 +400,14 @@ function islandora_serial_object_block_view($delta = '') {
       module_load_include('inc', 'islandora_serial_object', 'includes/utilities');
       if (strpos(current_path(), 'islandora/object') === 0) {
         $object = menu_get_object('islandora_object', 2);
-        if (!in_array('islandora:rootSerialCModel', $object->models)) {
+        if ($object) {
+          if (!in_array('islandora:rootSerialCModel', $object->models)) {
+            break;
+          }
+          $block['subject'] = t('Islandora Serial Object Tree View');
+          $block['content'] = islandora_serial_object_get_tree_view($object);
           break;
         }
-        $block['subject'] = t('Islandora Serial Object Tree View');
-        $block['content'] = islandora_serial_object_get_tree_view($object);
-        break;
       }
   }
   return $block;
