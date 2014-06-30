@@ -173,6 +173,40 @@ function islandora_serial_object_theme($existing, $type, $theme, $path) {
       'render element' => 'form',
       'file' => 'theme/theme.inc',
     ),
+    'islandora_serial_object' => array(
+      'file' => 'theme/theme.inc',
+      'pattern' => 'islandora_serial_object__',
+      'variables' => array(
+        'object' => NULL,
+      ),
+    ),
+    'islandora_serial_intermediate_object' => array(
+      'file' => 'theme/theme.inc',
+      'pattern' => 'islandora_serial_intermediate_object__',
+      'variables' => array(
+        'object' => NULL,
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_CMODEL_PID_islandora_view_object().
+ */
+function islandora_serial_object_islandora_rootserialcmodel_islandora_view_object(AbstractObject $serial) {
+  $output = theme('islandora_serial_object', array('object' => $serial));
+  return array(
+    'islandora_serial_object' => $output,
+  );
+}
+
+/**
+ * Implements hook_CMODEL_PID_islandora_view_object().
+ */
+function islandora_serial_object_islandora_intermediatecmodel_islandora_view_object(AbstractObject $serialintermediate) {
+  $output = theme('islandora_serial_intermediate_object', array('object' => $serialintermediate));
+  return array(
+    'islandora_serial_intermediate_object' => $output,
   );
 }
 
