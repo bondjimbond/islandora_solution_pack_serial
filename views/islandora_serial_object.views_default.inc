@@ -84,7 +84,7 @@ function islandora_serial_object_views_default_views() {
   $handler->display->display_options['fields']['mods_titleInfo_title_ms']['field'] = 'mods_titleInfo_title_ms';
   $handler->display->display_options['fields']['mods_titleInfo_title_ms']['label'] = 'Title';
   $handler->display->display_options['fields']['mods_titleInfo_title_ms']['alter']['make_link'] = TRUE;
-  $handler->display->display_options['fields']['mods_titleInfo_title_ms']['alter']['path'] = 'islandora/object/[PID]/datastream/OBJ/view';
+  $handler->display->display_options['fields']['mods_titleInfo_title_ms']['alter']['path'] = 'islandora/object/[PID]';
   $handler->display->display_options['fields']['mods_titleInfo_title_ms']['alter']['alt'] = 'PDF View';
   $handler->display->display_options['fields']['mods_titleInfo_title_ms']['empty'] = '[fgs_label_s]';
   $handler->display->display_options['fields']['mods_titleInfo_title_ms']['link_to_object'] = 0;
