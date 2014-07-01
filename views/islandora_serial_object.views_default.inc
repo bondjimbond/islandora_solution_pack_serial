@@ -34,25 +34,25 @@ function islandora_serial_object_views_default_views() {
   $handler->display->display_options['pager']['options']['id'] = '0';
   $handler->display->display_options['style_plugin'] = 'table';
   $handler->display->display_options['style_options']['columns'] = array(
+    'serial_section_heading_ms' => 'serial_section_heading_ms',
     'mods_titleInfo_title_ms' => 'mods_titleInfo_title_ms',
-    'mods_name_corporate_namePart_ms' => 'mods_name_corporate_namePart_ms',
-    'mods_name_personal_namePart_ms' => 'mods_name_corporate_namePart_ms',
+    'mods_name_namePart_ms' => 'mods_name_namePart_ms',
   );
   $handler->display->display_options['style_options']['default'] = '-1';
   $handler->display->display_options['style_options']['info'] = array(
+    'serial_section_heading_ms' => array(
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 1,
+    ),
     'mods_titleInfo_title_ms' => array(
       'align' => '',
       'separator' => '',
       'empty_column' => 0,
     ),
-    'mods_name_corporate_namePart_ms' => array(
+    'mods_name_namePart_ms' => array(
       'align' => '',
       'separator' => ', ',
-      'empty_column' => 0,
-    ),
-    'mods_name_personal_namePart_ms' => array(
-      'align' => '',
-      'separator' => '',
       'empty_column' => 0,
     ),
   );
@@ -72,13 +72,12 @@ function islandora_serial_object_views_default_views() {
   $handler->display->display_options['fields']['PID']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['PID']['link_to_object'] = 0;
   /* Field: Islandora Solr: fgs_label_s */
-  $handler->display->display_options['fields']['fgs_label_s']['id'] = 'fgs_label_s';
-  $handler->display->display_options['fields']['fgs_label_s']['table'] = 'islandora_solr';
-  $handler->display->display_options['fields']['fgs_label_s']['field'] = 'fgs_label_s';
-  $handler->display->display_options['fields']['fgs_label_s']['label'] = '';
-  $handler->display->display_options['fields']['fgs_label_s']['exclude'] = TRUE;
-  $handler->display->display_options['fields']['fgs_label_s']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['fgs_label_s']['link_to_object'] = 0;
+  $handler->display->display_options['fields']['serial_section_heading_ms']['id'] = 'serial_section_heading_ms';
+  $handler->display->display_options['fields']['serial_section_heading_ms']['table'] = 'islandora_solr';
+  $handler->display->display_options['fields']['serial_section_heading_ms']['field'] = 'serial_section_heading_ms';
+  $handler->display->display_options['fields']['serial_section_heading_ms']['label'] = 'Section';
+  $handler->display->display_options['fields']['serial_section_heading_ms']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['serial_section_heading_ms']['link_to_object'] = 0;
   /* Field: Islandora Solr: mods_titleInfo_title_ms */
   $handler->display->display_options['fields']['mods_titleInfo_title_ms']['id'] = 'mods_titleInfo_title_ms';
   $handler->display->display_options['fields']['mods_titleInfo_title_ms']['table'] = 'islandora_solr';
@@ -90,19 +89,12 @@ function islandora_serial_object_views_default_views() {
   $handler->display->display_options['fields']['mods_titleInfo_title_ms']['empty'] = '[fgs_label_s]';
   $handler->display->display_options['fields']['mods_titleInfo_title_ms']['link_to_object'] = 0;
   /* Field: Islandora Solr: mods_name_corporate_namePart_ms */
-  $handler->display->display_options['fields']['mods_name_corporate_namePart_ms']['id'] = 'mods_name_corporate_namePart_ms';
-  $handler->display->display_options['fields']['mods_name_corporate_namePart_ms']['table'] = 'islandora_solr';
-  $handler->display->display_options['fields']['mods_name_corporate_namePart_ms']['field'] = 'mods_name_corporate_namePart_ms';
-  $handler->display->display_options['fields']['mods_name_corporate_namePart_ms']['label'] = 'Authors';
-  $handler->display->display_options['fields']['mods_name_corporate_namePart_ms']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['mods_name_corporate_namePart_ms']['link_to_object'] = 0;
-  /* Field: Islandora Solr: mods_name_personal_namePart_ms */
-  $handler->display->display_options['fields']['mods_name_personal_namePart_ms']['id'] = 'mods_name_personal_namePart_ms';
-  $handler->display->display_options['fields']['mods_name_personal_namePart_ms']['table'] = 'islandora_solr';
-  $handler->display->display_options['fields']['mods_name_personal_namePart_ms']['field'] = 'mods_name_personal_namePart_ms';
-  $handler->display->display_options['fields']['mods_name_personal_namePart_ms']['label'] = '';
-  $handler->display->display_options['fields']['mods_name_personal_namePart_ms']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['mods_name_personal_namePart_ms']['link_to_object'] = 0;
+  $handler->display->display_options['fields']['mods_name_namePart_ms']['id'] = 'mods_name_namePart_ms';
+  $handler->display->display_options['fields']['mods_name_namePart_ms']['table'] = 'islandora_solr';
+  $handler->display->display_options['fields']['mods_name_namePart_ms']['field'] = 'mods_name_namePart_ms';
+  $handler->display->display_options['fields']['mods_name_namePart_ms']['label'] = 'Author(s)';
+  $handler->display->display_options['fields']['mods_name_namePart_ms']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['mods_name_namePart_ms']['link_to_object'] = 0;
   /* Sort criterion: Islandora Solr: RELS_EXT_sequence_position_literal_l */
   $handler->display->display_options['sorts']['RELS_EXT_sequence_position_literal_l']['id'] = 'RELS_EXT_sequence_position_literal_l';
   $handler->display->display_options['sorts']['RELS_EXT_sequence_position_literal_l']['table'] = 'islandora_solr';
@@ -133,14 +125,8 @@ return $object && islandora_serial_object_is_leaf($object) && in_array(\'islando
   $handler->display->display_options['filters']['RELS_EXT_hasModel_uri_ms']['id'] = 'RELS_EXT_hasModel_uri_ms';
   $handler->display->display_options['filters']['RELS_EXT_hasModel_uri_ms']['table'] = 'islandora_solr';
   $handler->display->display_options['filters']['RELS_EXT_hasModel_uri_ms']['field'] = 'RELS_EXT_hasModel_uri_ms';
-  $handler->display->display_options['filters']['RELS_EXT_hasModel_uri_ms']['value'] = 'info:fedora/islandora:sp_pdf';
+  $handler->display->display_options['filters']['RELS_EXT_hasModel_uri_ms']['value'] = 'info:fedora/islandora:sp_pdf OR info:fedora/islandora:intermediateSerialCModelStub';
   $handler->display->display_options['filters']['RELS_EXT_hasModel_uri_ms']['group'] = 1;
-  /* Filter criterion: Islandora Solr: RELS_EXT_hasModel_uri_ms */
-  $handler->display->display_options['filters']['RELS_EXT_hasModel_uri_ms_1']['id'] = 'RELS_EXT_hasModel_uri_ms_1';
-  $handler->display->display_options['filters']['RELS_EXT_hasModel_uri_ms_1']['table'] = 'islandora_solr';
-  $handler->display->display_options['filters']['RELS_EXT_hasModel_uri_ms_1']['field'] = 'RELS_EXT_hasModel_uri_ms';
-  $handler->display->display_options['filters']['RELS_EXT_hasModel_uri_ms_1']['value'] = 'info:fedora/islandora:intermediateSerialCModelStub';
-  $handler->display->display_options['filters']['RELS_EXT_hasModel_uri_ms_1']['group'] = 2;
 
   /* Display: Block */
   $handler = $view->new_display('block', 'Block', 'islandora_serial_object_intermediate_pdf_view');
