@@ -138,8 +138,15 @@ EOXML;
   }
   $mods_datastream->content = $mods_doc->saveXML();
 
-  // Update the label.
-  $object->label = "{$object_info['caption']} {$object_info['number']}";
+  // Only want to update the label if the object does not have one.
+  if (empty($object->label)) {
+    $label = array(
+      'caption' => $object_info['caption'],
+      'number' => $object_info['number'],
+    );
+    $label = array_filter($label);
+    $object->label = implode(' - ', $label);
+  }
   $object->relationships->autoCommit = FALSE;
   $object->relationships->remove(
     FEDORA_RELS_EXT_URI,
