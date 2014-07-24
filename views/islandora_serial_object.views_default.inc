@@ -191,13 +191,13 @@ return $object && islandora_serial_object_is_leaf($object) && in_array(\'islando
       'empty_column' => 0,
     ),
   );
-  /* Field: Islandora Solr: fgs_label_ms */
-  $flvc_handler->display->display_options['fields']['fgs_label_ms']['id'] = 'fgs_label_ms';
-  $flvc_handler->display->display_options['fields']['fgs_label_ms']['table'] = 'islandora_solr';
-  $flvc_handler->display->display_options['fields']['fgs_label_ms']['field'] = 'fgs_label_ms';
-  $flvc_handler->display->display_options['fields']['fgs_label_ms']['label'] = '';
-  $flvc_handler->display->display_options['fields']['fgs_label_ms']['element_label_colon'] = FALSE;
-  $flvc_handler->display->display_options['fields']['fgs_label_ms']['link_to_object'] = 1;
+  /* Field: Islandora Solr: fgs_label_s */
+  $flvc_handler->display->display_options['fields']['fgs_label_s']['id'] = 'fgs_label_s';
+  $flvc_handler->display->display_options['fields']['fgs_label_s']['table'] = 'islandora_solr';
+  $flvc_handler->display->display_options['fields']['fgs_label_s']['field'] = 'fgs_label_s';
+  $flvc_handler->display->display_options['fields']['fgs_label_s']['label'] = '';
+  $flvc_handler->display->display_options['fields']['fgs_label_s']['element_label_colon'] = FALSE;
+  $flvc_handler->display->display_options['fields']['fgs_label_s']['link_to_object'] = 1;
   /* Sort criterion: Islandora Solr: RELS_EXT_sequence_position_literal_l */
   $flvc_handler->display->display_options['sorts']['RELS_EXT_sequence_position_literal_l']['id'] = 'RELS_EXT_sequence_position_literal_l';
   $flvc_handler->display->display_options['sorts']['RELS_EXT_sequence_position_literal_l']['table'] = 'islandora_solr';
