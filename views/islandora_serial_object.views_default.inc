@@ -175,8 +175,10 @@ return $object && islandora_serial_object_is_leaf($object) && in_array(\'islando
   $flvc_handler->display->display_options['cache']['type'] = 'none';
   $flvc_handler->display->display_options['query']['type'] = 'views_query';
   $flvc_handler->display->display_options['exposed_form']['type'] = 'basic';
-  $flvc_handler->display->display_options['pager']['type'] = 'some';
-  $flvc_handler->display->display_options['pager']['options']['items_per_page'] = '5';
+  $flvc_handler->display->display_options['pager']['type'] = 'mini';
+  $flvc_handler->display->display_options['pager']['options']['items_per_page'] = '12';
+  $flvc_handler->display->display_options['pager']['options']['offset'] = '0';
+  $flvc_handler->display->display_options['pager']['options']['id'] = '0';
   $flvc_handler->display->display_options['style_plugin'] = 'table';
   $flvc_handler->display->display_options['style_options']['columns'] = array(
     'score' => 'score',
