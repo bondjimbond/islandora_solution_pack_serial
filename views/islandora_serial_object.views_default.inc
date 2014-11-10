@@ -125,9 +125,13 @@ return $object && islandora_serial_object_is_leaf($object) && in_array(\'islando
   $handler->display->display_options['filters']['RELS_EXT_hasModel_uri_ms']['id'] = 'RELS_EXT_hasModel_uri_ms';
   $handler->display->display_options['filters']['RELS_EXT_hasModel_uri_ms']['table'] = 'islandora_solr';
   $handler->display->display_options['filters']['RELS_EXT_hasModel_uri_ms']['field'] = 'RELS_EXT_hasModel_uri_ms';
-  $handler->display->display_options['filters']['RELS_EXT_hasModel_uri_ms']['value'] = 'info:fedora/islandora:sp_pdf OR info:fedora/islandora:intermediateSerialCModelStub';
+  $handler->display->display_options['filters']['RELS_EXT_hasModel_uri_ms']['value'] = 'info:fedora/islandora:sp_pdf';
   $handler->display->display_options['filters']['RELS_EXT_hasModel_uri_ms']['group'] = 1;
-
+/* Filter criterion: Islandora Solr: RELS_EXT_hasModel_uri_ms */
+  $handler->display->display_options['filters']['RELS_EXT_hasModel_uri_ms_1']['id'] = 'RELS_EXT_hasModel_uri_ms_1';
+  $handler->display->display_options['filters']['RELS_EXT_hasModel_uri_ms_1']['table'] = 'islandora_solr';
+  $handler->display->display_options['filters']['RELS_EXT_hasModel_uri_ms_1']['field'] = 'RELS_EXT_hasModel_uri_ms';
+  $handler->display->display_options['filters']['RELS_EXT_hasModel_uri_ms_1']['value'] = 'info:fedora/islandora:intermediateSerialCModelStub';
   /* Display: Block */
   $handler = $view->new_display('block', 'Block', 'islandora_serial_object_intermediate_pdf_view');
   $translatables['islandora_serial_object_intermediate_pdf_view'] = array(
