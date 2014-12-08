@@ -260,6 +260,16 @@ function islandora_serial_object_menu() {
     'access arguments' => array(2),
     'file' => 'includes/manage.inc',
   );
+  $items['islandora/object/%islandora_object/manage/add-intermediate'] = array(
+    'title' => 'Add Intermediate',
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 11,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('islandora_serial_object_add_intermediate_form', 2),
+    'access callback' => 'islandora_serial_object_add_intermediate_access',
+    'access arguments' => array(2),
+    'file' => 'includes/intermediate_add.form.inc',
+  );
   $items['admin/islandora/solution_pack_config/serial'] = array(
     'title' => 'Serial Object Solution Pack',
     'description' => 'Configure settings for the serial object solution pack.',
@@ -326,6 +336,20 @@ function islandora_serial_object_pdf_ingest_access(AbstractObject $object) {
  */
 function islandora_serial_object_intermediate_management_access(AbstractObject $object) {
   return islandora_object_access(ISLANDORA_INGEST, $object) && in_array('islandora:rootSerialCModel', $object->models);
+}
+
+/**
+ * Access callback for the adding single intermediate object form.
+ *
+ * @param AbstractObject $object
+ *   An AbstractObject representing an object within Fedora.
+ *
+ * @return bool
+ *   TRUE if the user has access, FALSE otherwise.
+ */
+function islandora_serial_object_add_intermediate_access(AbstractObject $object) {
+  module_load_include('inc', 'islandora_serial_object', 'includes/utilities');
+  return islandora_object_access(ISLANDORA_INGEST, $object) && (in_array('islandora:intermediateCModel', $object->models) || in_array('islandora:rootSerialCModel', $object->models));
 }
 
 /**
