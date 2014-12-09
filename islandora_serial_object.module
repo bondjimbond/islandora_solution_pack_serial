@@ -348,8 +348,8 @@ function islandora_serial_object_intermediate_management_access(AbstractObject $
  *   TRUE if the user has access, FALSE otherwise.
  */
 function islandora_serial_object_add_intermediate_access(AbstractObject $object) {
-  module_load_include('inc', 'islandora_serial_object', 'includes/utilities');
-  return islandora_object_access(ISLANDORA_INGEST, $object) && (in_array('islandora:intermediateCModel', $object->models) || in_array('islandora:rootSerialCModel', $object->models));
+  module_load_include('inc', 'islandora_serial_object', 'includes/intermediate_add.form');
+  return islandora_object_access(ISLANDORA_INGEST, $object) && (in_array('islandora:intermediateCModel', $object->models) || in_array('islandora:rootSerialCModel', $object->models)) && !islandora_serial_object_at_highest_level($object);
 }
 
 /**

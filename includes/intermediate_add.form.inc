@@ -222,3 +222,40 @@ EOQ;
   return $sequence_number ? $sequence_number['sequence_number']['value'] : 0;
 }
 
+/**
+ * Determines whether or not the intermediate object is at the highest level of the serial tree.
+ *
+ * @param AbstractObject $parent_object
+ *   An AbstractObject representing a Fedora object.
+ *
+ * @return bool
+ *   TRUE if the intermediate is a leaf, FALSE otherwise.
+ */
+function islandora_serial_object_at_highest_level(AbstractObject $parent_object) {
+
+  if (in_array('islandora:rootSerialCModel', $parent_object->models)) {
+    return FALSE;
+  }
+
+  $tuque = islandora_get_tuque_connection();
+  $query = 'select $subject $content from <#ri>
+               where  ($subject <fedora-model:hasModel> $content and ($content <mulgara:is> <info:fedora/islandora:rootSerialCModel>
+                    or $content <mulgara:is> <info:fedora/islandora:intermediateCModel>))
+               and walk(<info:fedora/' . $parent_object->id . '> <fedora-rels-ext:isMemberOf> $object
+               and $object <fedora-rels-ext:isMemberOf> $subject)';
+  $results = $tuque->repository->ri->itqlQuery($query);
+  $level_counter = 0;
+  $root_serial_pid = '';
+  foreach ($results as $result) {
+    $level_counter++;
+    if ($result['content']['value'] == 'islandora:rootSerialCModel') {
+      $root_serial_pid = str_replace('info:fedora/', '', $result['subject']['value']);
+    }
+  }
+  $root_serial_object = islandora_object_load($root_serial_pid);
+  $default_values = json_decode($root_serial_object['SERIAL-LEVELS']->content, TRUE);
+  if ($level_counter == count($default_values)) {
+    return TRUE;
+  }
+  return FALSE;
+}
