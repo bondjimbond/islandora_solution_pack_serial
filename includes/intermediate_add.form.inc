@@ -21,12 +21,19 @@ function islandora_serial_object_add_intermediate_form(array $form, array &$form
 
   $form_state['parent_object'] = $parent_object;
   $tuque = islandora_get_tuque_connection();
-  $query = 'select $subject $content from <#ri>
-               where  ($subject <fedora-model:hasModel> $content and ($content <mulgara:is> <info:fedora/islandora:rootSerialCModel>
-                    or $content <mulgara:is> <info:fedora/islandora:intermediateCModel>))
-               and walk(<info:fedora/' . $parent_object->id . '> <fedora-rels-ext:isMemberOf> $object
-               and $object <fedora-rels-ext:isMemberOf> $subject)';
-  $results = $tuque->repository->ri->itqlQuery($query);
+  $query = <<<'EOQ'
+SELECT ?subject ?content
+FROM <#ri>
+WHERE {
+  ?subject <fedora-model:hasModel> ?content .
+  <info:fedora/!pid> <fedora-rels-ext:isMemberOf>+ ?subject .
+FILTER (sameTerm(?content, <info:fedora/islandora:rootSerialCModel>) || sameTerm(?content, <info:fedora/islandora:intermediateCModel>))
+}
+EOQ;
+  $formatted_query = format_string($query, array(
+    '!pid' => $parent_object->id,
+  ));
+  $results = $tuque->repository->ri->sparqlQuery($formatted_query);
   $level_counter = 1;
   $root_serial_pid = '';
   foreach ($results as $result) {
@@ -206,18 +213,21 @@ function islandora_serial_object_get_max_intermediate_sequence_number($parent_id
   $islandora_namespace = ISLANDORA_RELS_EXT_URI;
   $fedora_namespace = FEDORA_RELS_EXT_URI;
   $sequence_query = <<<'EOQ'
-  select $sequence_number from <#ri> where
-    $child <!parent_predicate> <info:fedora/!pid> and
-    $child <!sequence_predicate> $sequence_number
-  order by $sequence_number desc
-  limit 1
+SELECT ?sequence_number
+FROM <#ri>
+WHERE {
+    ?child <!parent_predicate> <info:fedora/!pid> ;
+           <!sequence_predicate> $sequence_number .
+}
+ORDER BY DESC(?sequence_number)
+LIMIT 1
 EOQ;
   $formatted_query = format_string($sequence_query, array(
     '!parent_predicate' => "$fedora_namespace$intermediate_parent_predicate",
     '!pid' => $parent_id,
     '!sequence_predicate' => "$islandora_namespace$sequence_predicate",
   ));
-  $sequence_number_results = $tuque->repository->ri->itqlQuery($formatted_query);
+  $sequence_number_results = $tuque->repository->ri->sparqlQuery($formatted_query);
   $sequence_number = reset($sequence_number_results);
   return $sequence_number ? $sequence_number['sequence_number']['value'] : 0;
 }
@@ -238,12 +248,19 @@ function islandora_serial_object_at_highest_level(AbstractObject $parent_object)
   }
 
   $tuque = islandora_get_tuque_connection();
-  $query = 'select $subject $content from <#ri>
-               where  ($subject <fedora-model:hasModel> $content and ($content <mulgara:is> <info:fedora/islandora:rootSerialCModel>
-                    or $content <mulgara:is> <info:fedora/islandora:intermediateCModel>))
-               and walk(<info:fedora/' . $parent_object->id . '> <fedora-rels-ext:isMemberOf> $object
-               and $object <fedora-rels-ext:isMemberOf> $subject)';
-  $results = $tuque->repository->ri->itqlQuery($query);
+  $query = <<<'EOQ'
+SELECT ?subject ?content
+FROM <#ri>
+WHERE {
+  ?subject <fedora-model:hasModel> ?content .
+  <info:fedora/!pid> <fedora-rels-ext:isMemberOf>+ ?subject .
+FILTER (sameTerm(?content, <info:fedora/islandora:rootSerialCModel>) || sameTerm(?content, <info:fedora/islandora:intermediateCModel>))
+}
+EOQ;
+  $formatted_query = format_string($query, array(
+    '!pid' => $parent_object->id,
+  ));
+  $results = $tuque->repository->ri->sparqlQuery($formatted_query);
   $level_counter = 0;
   $root_serial_pid = '';
   foreach ($results as $result) {
