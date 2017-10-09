@@ -120,8 +120,8 @@ function islandora_serial_object_add_intermediate_form_submit($form, &$form_stat
 <mods
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns="http://www.loc.gov/mods/v3"
-  xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-4.xsd"
-    version="3.4">
+  xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-6.xsd"
+    version="3.6">
   <relatedItem type="host">
     <part>
       <detail type="{$special_type}">
