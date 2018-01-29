@@ -337,32 +337,61 @@ function islandora_serial_object_get_children($parent_pid, $tree_structure = FAL
   $tuque = islandora_get_tuque_connection();
   $islandora_namespace = ISLANDORA_RELS_EXT_URI;
   $sequence_predicate = ISLANDORA_SERIAL_OBJECT_SEQUENCE_PREDICATE;
+  $xacml_filter = module_invoke('islandora_xacml_api', 'islandora_basic_collection_get_query_filters');
   if (variable_get('islandora_risearch_use_itql_when_necessary', TRUE)) {
+    global $user;
+    $user_name = $user->uid === 0 ? 'anonymous' : $user->name;
+    $xacml_statement = '(';
+    foreach ($user->roles as $role) {
+      $xacml_statement .= '$object <http://islandora.ca/ontology/relsext#isViewableByRole> ' . "'$role' or ";
+    }
+    $xacml_statement .= '$object <http://islandora.ca/ontology/relsext#isViewableByUser> ' . "'$user_name'" . ')';
     $query = '
       select $object $parent $label $sequence_num from <#ri>
       where (
+       (
         $object <fedora-model:label> $label and
         $object <!namespace!sequence> $sequence_num and
+        $object <fedora-model:state> <fedora-model:Active> and
         walk(
           $object <fedora-rels-ext:isMemberOf> <info:fedora/' . $parent_pid . '>
           and $object <fedora-rels-ext:isMemberOf> $parent)
+        minus $object <http://islandora.ca/ontology/relsext#isViewableByRole> $role
+        minus $object <http://islandora.ca/ontology/relsext#isViewableByRole> $user
+       )
+       or
+       (
+        $object <fedora-model:label> $label and
+        $object <!namespace!sequence> $sequence_num and
+        $object <fedora-model:state> <fedora-model:Active> and
+        walk(
+          $object <fedora-rels-ext:isMemberOf> <info:fedora/' . $parent_pid . '>
+          and $object <fedora-rels-ext:isMemberOf> $parent) and
+        !xacml
+       )
       )
     ';
     $query = format_string($query, array(
       '!namespace' => $islandora_namespace,
       '!sequence' => $sequence_predicate,
+      '!xacml' => $xacml_statement,
     ));
     $raw_results = $tuque->repository->ri->itqlQuery($query);
   }
   else {
+    $optionals = (array) module_invoke('islandora_xacml_api', 'islandora_basic_collection_get_query_optionals', 'view');
+    $optionals_statement = !empty($optionals) ? ('OPTIONAL {{' . implode('} UNION {', $optionals) . '}}') : '';
     $query = <<<EOQ
 SELECT ?object ?parent ?label ?sequence_num
 FROM <#ri>
 WHERE {
   ?object <fedora-model:label> ?label ;
           <$islandora_namespace$sequence_predicate> ?sequence_num ;
+          <fedora-model:state> <fedora-model:Active> ;
           <fedora-rels-ext:isMemberOf> ?parent ;
-          <fedora-rels-ext:isMemberOf>+ <info:fedora/$parent_pid>
+          <fedora-rels-ext:isMemberOf>+ <info:fedora/$parent_pid> .
+$optionals_statement
+FILTER($xacml_filter)
 }
 EOQ;
     $raw_results = $tuque->repository->ri->sparqlQuery($query);
