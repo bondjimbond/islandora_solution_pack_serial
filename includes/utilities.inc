@@ -407,6 +407,7 @@ EOQ;
       'leaf' => isset($leafs[$result['object']['value']]),
     );
   }
+  $start_flat = time();
   if ($tree_structure) {
     $processed_results = islandora_serial_object_build_tree($flat_structure, $parent_pid);
   }
@@ -422,6 +423,8 @@ EOQ;
       );
     }
   }
+  $end_flat = time();
+  watchdog('Islandora Serial', 'Time to build flat tree is %time', array('%time' => $end_flat - $start_flat), WATCHDOG_WARNING);
   return $processed_results;
 }
 
@@ -841,6 +844,31 @@ function islandora_serial_object_replace_xpath($xpath, $replacement) {
  */
 function islandora_serial_object_retrieve_mods_data($id, $type) {
   $data = array();
+
+  $query = "PID:\"$id\"";
+  $params = array(
+    'fl' => 'mods_relatedItem_part_detail_caption_ms, mods_relatedItem_part_detail_number_ms',
+  );
+  $url = parse_url(variable_get('islandora_solr_url', 'localhost:8080/solr'));
+  $solr = new Apache_Solr_Service($url['host'], $url['port'], $url['path'] . '/');
+  $solr->setCreateDocuments(FALSE);
+  try {
+    $results = $solr->search($query, 0, 20, $params);
+    $json = json_decode($results->getRawResponse(), TRUE);
+    foreach ($json['response']['docs'] as $doc) {
+      if (isset($doc['mods_relatedItem_part_detail_caption_ms'])) {
+        $data['caption'] = $doc['mods_relatedItem_part_detail_caption_ms'][0];
+      }
+      if (isset($doc['mods_relatedItem_part_detail_number_ms'])) {
+        $data['number'] = $doc['mods_relatedItem_part_detail_number_ms'][0];
+      }
+      return $data;
+    }
+  }
+  catch (Exception $e) {
+    watchdog_exception('Islandora Serial', $e, 'Got an exception while searching for MODS fields.', array(), WATCHDOG_ERROR);
+  }
+
   $object = islandora_object_load($id);
   $mods_string = $object['MODS']->content;
   $mods_doc = new DOMDocument();
