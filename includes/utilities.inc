@@ -859,8 +859,14 @@ function islandora_serial_object_retrieve_mods_data($id, $type) {
       if (isset($doc['mods_relatedItem_part_detail_caption_ms'])) {
         $data['caption'] = $doc['mods_relatedItem_part_detail_caption_ms'][0];
       }
+      else {
+        $data['caption'] = '';
+      }
       if (isset($doc['mods_relatedItem_part_detail_number_ms'])) {
         $data['number'] = $doc['mods_relatedItem_part_detail_number_ms'][0];
+      }
+      else {
+        $data['number'] = '';
       }
       return $data;
     }
