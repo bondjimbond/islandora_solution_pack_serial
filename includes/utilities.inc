@@ -407,7 +407,6 @@ EOQ;
       'leaf' => isset($leafs[$result['object']['value']]),
     );
   }
-  $start_flat = time();
   if ($tree_structure) {
     $processed_results = islandora_serial_object_build_tree($flat_structure, $parent_pid);
   }
@@ -423,8 +422,6 @@ EOQ;
       );
     }
   }
-  $end_flat = time();
-  watchdog('Islandora Serial', 'Time to build flat tree is %time', array('%time' => $end_flat - $start_flat), WATCHDOG_WARNING);
   return $processed_results;
 }
 
@@ -872,7 +869,7 @@ function islandora_serial_object_retrieve_mods_data($id, $type) {
     }
   }
   catch (Exception $e) {
-    watchdog_exception('Islandora Serial', $e, 'Got an exception while searching for MODS fields.', array(), WATCHDOG_ERROR);
+    watchdog_exception('Islandora Serial', $e, 'Got an exception while searching for MODS fields.', array(), WATCHDOG_WARNING);
   }
 
   $object = islandora_object_load($id);
